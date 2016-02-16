@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-7s5uDGW3AHqw6xtJmNNtr+OBRJUlgkNJEo78P4b0yRw= sha512-nNo+yCHEyn0smMxSswnf/OnX6/KwJuZTlNZBjauKhTK0c+zT+q5JOCx0UFhXQ6rJR9jg6Es8gPuD2uZcYDLqSw==" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/6.0.16/css/bootstrap-slider.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <style>
+        [ng\:cloak],
+        [ng-cloak],
+        [data-ng-cloak],
+        [x-ng-cloak],
+        .ng-cloak,
+        .x-ng-cloak {
+            display: none !important;
+        }
+
+    </style>
+    <div ng-app="islandGenerator" class="ng-cloak">
+        <div ng-controller="mainCtrl">
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h2>Map</h2>
+                        <div id="svgMapContainer"></div>
+                    </div>
+                    <div class="col-sm-4">
+                        <h2>Parameters</h2>
+                        <h3>Grid</h3>
+
+                        <label>Mode</label>
+                        <br />
+                        <div class="btn-group" uib-dropdown>
+                            <button type="button" class="btn btn-default" uib-dropdown-toggle>
+                                {{ selectedMode.name }} <span class="caret"></span>
+                            </button>
+                            <ul uib-dropdown-menu aria-labelledby="simple-dropdown">
+                                <li ng-repeat="mode in modes">
+                                    <a href ng-click="selectMode(mode.id)">{{ mode.name }}</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <br />
+
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="isGrey" ng-change="onClickColorMode(isGrey)"> Black & white
+                            </label>
+                        </div>
+
+                        <hr />
+
+                        <div ng-show="selectedMode.id < 2">
+                            <h3>Perlin Noise</h3>
+
+                            <label>Intensity</label>
+                            <slider slider-id="perlin.intensity.id" ng-model="perlin.intensity.value" value="perlin.intensity.value" min="perlin.intensity.min" max="perlin.intensity.max" step="perlin.intensity.step" on-slide="onChangePerlin()">
+                            </slider>
+                            <br />
+
+                            <label>Frequency</label>
+                            <slider slider-id="perlin.frequency.id" ng-model="perlin.frequency.value" value="perlin.frequency.value" min="perlin.frequency.min" max="perlin.frequency.max" step="perlin.frequency.step" on-slide="onChangePerlin()">
+                            </slider>
+                            <br />
+
+                            <label>Octaves</label>
+                            <slider slider-id="perlin.octave.id" ng-model="perlin.octave.value" value="perlin.octave.value" min="perlin.octave.min" max="perlin.octave.max" step="perlin.octave.step" on-slide="onChangePerlin()">
+                            </slider>
+                            <br />
+
+                            <button type="button" class="btn btn-default" ng-click="refreshNoise()">Refresh Noise</button>
+                            <hr />
+                        </div>
+                        <div ng-show="selectedMode.id === 0 || selectedMode.id === 2">
+                            <h3>Gradients</h3>
+
+                            <label>Quantity</label>
+                            <slider slider-id="gradients.quantity.id" ng-model="gradients.quantity.value" value="gradients.quantity.value" min="gradients.quantity.min" max="gradients.quantity.max" step="gradients.quantity.step" on-slide="onChangeGradients()">
+                            </slider>
+                            <br />
+
+                            <label>Intensity</label>
+                            <slider slider-id="gradients.intensity.id" ng-model="gradients.intensity.value" value="gradients.intensity.value" min="gradients.intensity.min" max="gradients.intensity.max" step="gradients.intensity.step" on-slide="onChangeGradients()">
+                            </slider>
+                            <br />
+
+                            <label>Radius</label>
+                            <slider slider-id="gradients.radius.id" ng-model="gradients.radius.value" value="gradients.radius.value" min="gradients.radius.min" max="gradients.radius.max" step="gradients.radius.step" on-slide="onChangeGradients()">
+                            </slider>
+                            <br />
+
+                            <button type="button" class="btn btn-default" ng-click="refreshGradients()">Refresh Gradients</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.14/d3.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/6.0.16/bootstrap-slider.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.1.2/ui-bootstrap.js"></script>
+
+    <script src="../app/lib/angularSlider.js"></script>
+    <script src="../app/app.js"></script>
+    <script src="../app/services/genericServices.js"></script>
+    <script src="../app/entities/hexagon.js"></script>
+    <script src="../app/entities/perlin.js"></script>
+    <script src="../app/entities/biome.js"></script>
+    <script src="../app/services/mapServices.js"></script>
+    <script src="../app/controllers/mainCtrl.js"></script>
+
+</body>
+
+</html>
