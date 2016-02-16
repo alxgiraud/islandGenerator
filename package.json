@@ -1,0 +1,33 @@
+{
+  "name": "IslandGenerator",
+  "version": "1.0.0",
+  "description": "Procedural generation of SVG Islands using Perlin Noise and gradients in a grid of hexagons.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alxgiraud/islandGenerator.git"
+  },
+  "keywords": [
+    "procedural",
+    "generation",
+    "hexagon",
+    "svg",
+    "island",
+    "perlin",
+    "noise"
+  ],
+  "author": "Alexandre Giraud",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alxgiraud/islandGenerator/issues"
+  },
+  "homepage": "https://github.com/alxgiraud/islandGenerator",
+  "dependencies": {
+    "ejs": "^2.4.1",
+    "express": "^4.13.4"
+  }
+}
