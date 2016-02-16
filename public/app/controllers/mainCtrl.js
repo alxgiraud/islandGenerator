@@ -2,9 +2,36 @@
 app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome', function ($scope, mapServices, genericServices, Biome) {
     'use strict';
 
-    var biome = new Biome(35, Math.round(35 * Math.sqrt(3) / 2));
-    console.log(biome);
+    var biome = new Biome(45, Math.round(45 * Math.sqrt(3) / 2));
+
     mapServices.initMap();
+
+    /* Dropdown mode */
+    $scope.modes = [
+        {
+            id: 0,
+            name: 'Mixed'
+        },
+        {
+            id: 1,
+            name: 'Perlin Only'
+        }, {
+            id: 2,
+            name: 'Gradients Only'
+        }
+    ];
+
+    $scope.selectedMode = $scope.modes[0];
+    $scope.selectMode = function (id) {
+        $scope.selectedMode = $scope.modes[id];
+        mapServices.drawGrid(biome, $scope.isGrey, $scope.selectedMode.id);
+    };
+
+    /* Color mode */
+    $scope.isGrey = false;
+    $scope.onClickColorMode = function (isGrey) {
+        mapServices.drawGrid(biome, $scope.isGrey, $scope.selectedMode.id);
+    };
 
     $scope.perlin = {
         intensity: {
@@ -83,31 +110,12 @@ app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome',
         $scope.onChangeGradients();
     };
 
-    /* Dropdown mode */
-    $scope.modes = [
-        {
-            id: 0,
-            name: 'Mixed'
-        },
-        {
-            id: 1,
-            name: 'Perlin Only'
-        }, {
-            id: 2,
-            name: 'Gradients Only'
-        }
-    ];
-
-    $scope.selectedMode = $scope.modes[0];
-    $scope.selectMode = function (id) {
-        $scope.selectedMode = $scope.modes[id];
-        mapServices.drawGrid(biome, $scope.isGrey, $scope.selectedMode.id);
+    $scope.downloadPdf = function () {
+        mapServices.downloadPdf();
     };
 
-    /* Color mode */
-    $scope.isGrey = false;
-    $scope.onClickColorMode = function (isGrey) {
-        mapServices.drawGrid(biome, $scope.isGrey, $scope.selectedMode.id);
+    $scope.downloadPng = function () {
+        mapServices.downloadPng();
     };
 
     biome.setGradientSeeds($scope.gradients.quantity.value);

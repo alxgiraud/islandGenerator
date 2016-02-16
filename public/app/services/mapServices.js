@@ -1,4 +1,4 @@
-/*global app, d3*/
+/*global app, d3, jsPDF, canvg*/
 app.factory('mapServices', [function () {
     'use strict';
 
@@ -99,9 +99,15 @@ app.factory('mapServices', [function () {
             d3.select('#svgMapContainer')
                 .append('svg')
                 .attr('width', '100%')
-                .attr('height', 600)
+                .attr('height', 800)
                 .call(zoom.on('zoom', privateMethods.onZoom).scaleExtent([0.5, 10]))
-                .append('g');
+                .append('rect') //add white background for clean export
+                .attr('width', '100%')
+                .attr('height', '100%')
+                .attr('fill', 'white');
+
+            d3.select('svg').append('g');
+
         },
 
         drawGrid: function (biome, isGrey, mode) {
@@ -152,6 +158,29 @@ app.factory('mapServices', [function () {
 
         clearGrid: function () {
             d3.selectAll('polygon').remove();
+        },
+
+        downloadPdf: function () {
+            var canvas = document.getElementById('canvas'),
+                svg = d3.select('svg').node().parentNode.innerHTML,
+                JsPdf = jsPDF, //fix jslint error
+                pdf = new JsPdf('p', 'mm', [297, 210]);
+
+            canvg('canvas', svg); //convert SVG to Canvas
+
+            pdf.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', 5, 5);
+            pdf.save('island-' + Date.now() + '.pdf');
+        },
+
+        downloadPng: function () {
+            var canvas = document.getElementById('canvas'),
+                svg = d3.select('svg').node().parentNode.innerHTML,
+                link = document.getElementById('exportPng');
+
+            canvg('canvas', svg); //convert SVG to Canvas
+
+            link.href = canvas.toDataURL();
+            link.download = 'island-' + Date.now();
         }
     };
 
