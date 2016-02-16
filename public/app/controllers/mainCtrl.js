@@ -114,6 +114,7 @@ app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome',
         mapServices.downloadPdf();
     };
 
+    $scope.browserCompliant = (!genericServices.isInternetExplorer() && !genericServices.isSafari());
     $scope.downloadPng = function () {
         mapServices.downloadPng();
     };

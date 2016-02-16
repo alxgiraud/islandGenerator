@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+
     <title>Island Generator</title>
     <link rel="icon" href="img/favicon.ico" />
 
@@ -109,7 +109,7 @@
 
                         <div style="margin-bottom:30px;">
                             <button type="button" class="btn btn-default" ng-click="downloadPdf()"><i class="fa fa-file-pdf-o"></i> PDF</button>
-                            <a id="exportPng" class="btn btn-default" ng-click="downloadPng()"><i class="fa fa-file-image-o"></i> PNG</a>
+                            <a ng-show="browserCompliant" id="exportPng" class="btn btn-default" ng-click="downloadPng()"><i class="fa fa-file-image-o"></i> PNG</a>
                         </div>
                     </div>
                 </div>
