@@ -27,9 +27,9 @@ app.factory('Hexagon', [function () {
         },
 
         round: function () {
-            var x = Math.trunc(Math.round(this.x)),
-                y = Math.trunc(Math.round(this.y)),
-                z = Math.trunc(Math.round(this.z)),
+            var x = Math.round(this.x),
+                y = Math.round(this.y),
+                z = Math.round(this.z),
                 xDiff = Math.abs(x - this.x),
                 yDiff = Math.abs(y - this.y),
                 zDiff = Math.abs(z - this.z);
