@@ -58,6 +58,33 @@ app.factory('Biome', ['Hexagon', 'Perlin', 'genericServices', function (Hexagon,
         return rings;
     }
 
+    function getSortedIntensities(intensities, islandSizePercentage) {
+        var sortedIntensities = [],
+            i,
+            j,
+            islandSize;
+
+        for (i = 0; i < intensities.length; i += 1) {
+            for (j = 0; j < intensities[i].length; j += 1) {
+                if (intensities[i][j] > 0) {
+                    sortedIntensities.push(intensities[i][j]);
+                }
+            }
+        }
+
+        sortedIntensities = sortedIntensities.sort(function (a, b) {
+            return a - b;
+        });
+
+        islandSize = Math.round(islandSizePercentage * sortedIntensities.length / 100);
+
+        if (islandSize < sortedIntensities.length) {
+            sortedIntensities = sortedIntensities.slice(-islandSize);
+        }
+
+        return sortedIntensities;
+    }
+
     /* Public functions */
     Biome.prototype = {
 
@@ -165,7 +192,95 @@ app.factory('Biome', ['Hexagon', 'Perlin', 'genericServices', function (Hexagon,
             while (this.chunks.length > width) {
                 this.chunks.pop();
             }
+        },
+
+        setBiomes: function (mode, islandSize, biomesDistribution, isGrey) {
+            // This code is fugly but my brain is melting
+            var intensities = [],
+                i,
+                j,
+                sortedIntensities = [],
+                gradient,
+                perlin,
+                limit;
+
+            for (i = 0; i < this.chunks.length; i += 1) {
+                intensities[i] = [];
+                for (j = 0; j < this.chunks[i].length; j += 1) {
+                    gradient = this.gradients[i][j];
+                    perlin = this.perlinNoise[i][j];
+
+                    if (mode === 0) { // Normal
+                        intensities[i][j] = Math.max(gradient - perlin, 0);
+                    } else if (mode === 1) { // Perlin only
+                        intensities[i][j] = perlin;
+                    } else if (mode === 2) { // Gradient only
+                        intensities[i][j] = gradient;
+                    }
+                }
+            }
+
+            sortedIntensities = getSortedIntensities(intensities, islandSize);
+
+            // filter intensities below the smallest possible intensity
+            for (i = 0; i < intensities.length; i += 1) {
+                for (j = 0; j < intensities[i].length; j += 1) {
+                    if (intensities[i][j] < sortedIntensities[0]) {
+                        intensities[i][j] = 0;
+                    }
+                }
+            }
+
+            // assign biome based on intensity distribution
+            for (i = 0; i < this.chunks.length; i += 1) {
+                for (j = 0; j < this.chunks[i].length; j += 1) {
+                    if (isGrey) {
+                        this.chunks[i][j].biome = intensities[i][j]; //Add raw intensity as biome for grey scale
+                    } else {
+                        if (intensities[i][j] > 0) {
+                            limit = Math.round(sortedIntensities.length * biomesDistribution[0].value / 100);
+                            if (intensities[i][j] < sortedIntensities[limit]) {
+                                this.chunks[i][j].biome = 1;
+                            } else {
+
+                                limit += Math.round(sortedIntensities.length * biomesDistribution[1].value / 100);
+                                if (intensities[i][j] < sortedIntensities[limit]) {
+                                    this.chunks[i][j].biome = 2;
+                                } else {
+
+                                    limit += Math.round(sortedIntensities.length * biomesDistribution[2].value / 100);
+                                    if (intensities[i][j] < sortedIntensities[limit]) {
+                                        this.chunks[i][j].biome = 3;
+                                    } else {
+
+                                        limit += Math.round(sortedIntensities.length * biomesDistribution[3].value / 100);
+                                        if (intensities[i][j] < sortedIntensities[limit]) {
+                                            this.chunks[i][j].biome = 4;
+                                        } else {
+                                            if (biomesDistribution[4].value > 0) {
+                                                this.chunks[i][j].biome = 5;
+                                            } else if (biomesDistribution[3].value > 0) {
+                                                this.chunks[i][j].biome = 4;
+
+                                            } else if (biomesDistribution[2].value > 0) {
+                                                this.chunks[i][j].biome = 3;
+
+                                            } else if (biomesDistribution[1].value > 0) {
+                                                this.chunks[i][j].biome = 2;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            this.chunks[i][j].biome = 0;
+                        }
+                    }
+                }
+            }
         }
+
+
     };
 
     return Biome;

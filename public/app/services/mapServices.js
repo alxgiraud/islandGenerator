@@ -46,50 +46,25 @@ app.factory('mapServices', [function () {
                 return points;
             },
 
-            getIntensity: function (biome, x, y, mode) {
-                var gradient = biome.gradients[x][y],
-                    perlin = biome.perlinNoise[x][y];
-
-                if (mode === 0) {
-                    return Math.max(gradient - perlin, 0);
-                }
-                if (mode === 1) {
-                    return perlin;
-                }
-                if (mode === 2) {
-                    return gradient;
-                }
-                return 0;
-            },
-
-            getColor: function (intensity, isGrey) {
-
-                if (isGrey) {
-                    return 'rgb(' +
-                        Math.round(255 - intensity * 256) + ',' +
-                        Math.round(255 - intensity * 256) + ',' +
-                        Math.round(255 - intensity * 256) + ')';
-                }
-
-                if (intensity > 0.8) {
+            getColor: function (biome) {
+                if (biome === 5) {
                     return colors.HEX_DARKFOREST;
                 }
-                if (intensity > 0.6) {
+                if (biome === 4) {
                     return colors.HEX_LIGHTFOREST;
                 }
-                if (intensity > 0.2) {
+                if (biome === 3) {
                     return colors.HEX_GRASSLAND;
                 }
-                if (intensity > 0.1) {
+                if (biome === 2) {
                     return colors.HEX_SAND;
                 }
-                if (intensity > 0) {
+                if (biome === 1) {
                     return colors.HEX_LIGHTWATER;
                 }
-                if (intensity === 0) {
+                if (biome === 0) {
                     return colors.HEX_DEEPWATER;
                 }
-
                 return colors.HEX_DEFAULT;
             }
         };
@@ -100,7 +75,7 @@ app.factory('mapServices', [function () {
                 .append('svg')
                 .attr('width', '100%')
                 .attr('height', 800)
-                .call(zoom.on('zoom', privateMethods.onZoom).scaleExtent([0.5, 10]))
+                .call(zoom.on('zoom', privateMethods.onZoom).scaleExtent([0.1, 10]))
                 .append('rect') //add white background for clean export
                 .attr('width', '100%')
                 .attr('height', '100%')
@@ -110,15 +85,14 @@ app.factory('mapServices', [function () {
 
         },
 
-        drawGrid: function (biome, isGrey, mode) {
-            var chunks = biome.chunks,
+        drawGrid: function (world, isGrey) {
+            var chunks = world.chunks,
                 height = constants.HEX_WIDTH * Math.sqrt(3) / 2,
                 radius = constants.HEX_WIDTH / 2,
                 x = 0,
                 y = 0,
                 i,
                 j,
-                intensity,
                 color,
                 colorStroke,
                 strokeWidth,
@@ -133,8 +107,12 @@ app.factory('mapServices', [function () {
 
                     y += height;
 
-                    intensity = privateMethods.getIntensity(biome, i, j, mode);
-                    color = privateMethods.getColor(intensity, isGrey);
+                    color = (isGrey) ?
+                            'rgb(' + Math.round(255 - world.chunks[i][j].biome * 256) + ',' +
+                            Math.round(255 - world.chunks[i][j].biome * 256) + ',' +
+                            Math.round(255 - world.chunks[i][j].biome * 256) + ')' :
+                            privateMethods.getColor(world.chunks[i][j].biome);
+
                     colorStroke = (isGrey) ? 'black' : 'lightgrey';
                     strokeWidth = (isGrey) ? 0.5 : 0;
 

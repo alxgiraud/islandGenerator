@@ -7,121 +7,150 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Island Generator</title>
+
     <link rel="icon" href="img/favicon.ico" />
 
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-7s5uDGW3AHqw6xtJmNNtr+OBRJUlgkNJEo78P4b0yRw= sha512-nNo+yCHEyn0smMxSswnf/OnX6/KwJuZTlNZBjauKhTK0c+zT+q5JOCx0UFhXQ6rJR9jg6Es8gPuD2uZcYDLqSw==" crossorigin="anonymous">
+    <link href="css/bootstrap-paper.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/6.0.16/css/bootstrap-slider.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
-
+    <link href="css/style.css" rel="stylesheet">
 </head>
 
 <body>
-    <style>
-        [ng\:cloak],
-        [ng-cloak],
-        [data-ng-cloak],
-        [x-ng-cloak],
-        .ng-cloak,
-        .x-ng-cloak {
-            display: none !important;
-        }
-
-    </style>
     <div ng-app="islandGenerator" class="ng-cloak">
         <div ng-controller="mainCtrl">
-
-            <div class="container" style="margin-top:30px;">
+            <div class="container">
                 <div class="row">
                     <div class="col-sm-8">
                         <h2>Island</h2>
-                        <div id="svgMapContainer"></div>
-                        <!-- Hidden canvas used by PDF/PNG donwload -->
+                        <div id="svgMapContainer" class="list-group"></div>
+                        <!-- Hidden canvas used by PDF/PNG downloads -->
                         <canvas id="canvas" width="100%" height="800px" ng-show="false"></canvas>
                     </div>
                     <div class="col-sm-4">
                         <h2>Parameters</h2>
-                        <h3>Grid</h3>
+                        <h4>Grid</h4>
 
                         <label>Mode</label>
-                        <br />
-                        <div class="btn-group" uib-dropdown>
-                            <button type="button" class="btn btn-default" uib-dropdown-toggle>
-                                {{ selectedMode.name }} <span class="caret"></span>
-                            </button>
-                            <ul uib-dropdown-menu aria-labelledby="simple-dropdown">
-                                <li ng-repeat="mode in modes">
-                                    <a href ng-click="selectMode(mode.id)">{{ mode.name }}</a>
-                                </li>
-                            </ul>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="btn-group" uib-dropdown>
+                                    <button type="button" class="btn btn-default" uib-dropdown-toggle>
+                                        {{ selectedMode.name }} <span class="caret"></span>
+                                    </button>
+                                    <ul uib-dropdown-menu aria-labelledby="simple-dropdown">
+                                        <li ng-repeat="mode in modes">
+                                            <a href ng-click="selectMode(mode.id)">{{ mode.name }}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" ng-model="isGrey" ng-change="onClickColorMode(isGrey)"> Black & white
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                        <br />
 
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" ng-model="isGrey" ng-change="onClickColorMode(isGrey)"> Black & white
-                            </label>
-                        </div>
+                        <label>Size</label>
+                        <slider class="bottom-gap" slider-id="islandSize.id" ng-model="islandSize.value" value="islandSize.value" min="islandSize.min" max="islandSize.max" step="islandSize.step" on-slide="onChangeIslandSize()" ng-click="onChangeIslandSize()">
+                        </slider>
+
+                        <button type="button" class="btn btn-primary" ng-click="resfreshAll()">Refresh</button>
 
                         <hr />
 
-                        <div ng-show="selectedMode.id < 2">
-                            <h3>Perlin Noise</h3>
+                        <uib-tabset>
+                            <!-- Biomes sliders -->
+                            <uib-tab heading="Biomes" disable="isGrey" active="selectedTab[0]">
+                                <div ng-show="!isGrey">
+                                    <h4>Biomes</h4>
+                                    <table class="slider-table">
+                                        <tbody ng-repeat="biome in biomesDistribution">
+                                            <th class="colspan2">
+                                                <label>{{ biome.label }}</label>
+                                            </th>
+                                            <tr class="slider-table-bottom-gap">
+                                                <td>
+                                                    <slider slider-id="biome.id" ng-model="biome.value" value="biome.value" min="biome.min" max="biome.max" step="biome.step" on-slide="onChangeBiomesDistribution()" ng-click="onChangeBiomesDistribution()">
+                                                    </slider>
+                                                </td>
+                                                <td class="text-right">{{ biome.value }}%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="total-biomes">
+                                        Total
+                                        <span class="pull-right" ng-class="{ 'text-danger': getTotalBiomes() !== 100 }">
+                                        <i class="fa fa-exclamation-triangle" ng-show="getTotalBiomes() !== 100"></i> 
+                                        {{ getTotalBiomes() }}%
+                                </span>
+                                    </div>
+                                    <button type="button" class="btn btn-default" ng-click="randomizeBiomes()">Randomize</button>
+                                </div>
+                            </uib-tab>
 
-                            <label>Intensity</label>
-                            <slider slider-id="perlin.intensity.id" ng-model="perlin.intensity.value" value="perlin.intensity.value" min="perlin.intensity.min" max="perlin.intensity.max" step="perlin.intensity.step" on-slide="onChangePerlin()">
-                            </slider>
-                            <br />
+                            <!-- Perlin Noise sliders -->
+                            <uib-tab heading="Perlin" disable="selectedMode.id === 2" active="selectedTab[1]">
+                                <div ng-show="selectedMode.id === 0 || selectedMode.id === 1">
+                                    <h4>Perlin</h4>
+                                    <label>Intensity</label>
+                                    <slider class="bottom-gap" slider-id="perlin.intensity.id" ng-model="perlin.intensity.value" value="perlin.intensity.value" min="perlin.intensity.min" max="perlin.intensity.max" step="perlin.intensity.step" on-slide="onChangePerlin()" ng-click="onChangePerlin()">
+                                    </slider>
 
-                            <label>Frequency</label>
-                            <slider slider-id="perlin.frequency.id" ng-model="perlin.frequency.value" value="perlin.frequency.value" min="perlin.frequency.min" max="perlin.frequency.max" step="perlin.frequency.step" on-slide="onChangePerlin()">
-                            </slider>
-                            <br />
+                                    <label>Frequency</label>
+                                    <slider class="bottom-gap" slider-id="perlin.frequency.id" ng-model="perlin.frequency.value" value="perlin.frequency.value" min="perlin.frequency.min" max="perlin.frequency.max" step="perlin.frequency.step" on-slide="onChangePerlin()" ng-click="onChangePerlin()">
+                                    </slider>
 
-                            <label>Octaves</label>
-                            <slider slider-id="perlin.octave.id" ng-model="perlin.octave.value" value="perlin.octave.value" min="perlin.octave.min" max="perlin.octave.max" step="perlin.octave.step" on-slide="onChangePerlin()">
-                            </slider>
-                            <br />
+                                    <label>Octaves</label>
+                                    <slider class="bottom-gap" slider-id="perlin.octave.id" ng-model="perlin.octave.value" value="perlin.octave.value" min="perlin.octave.min" max="perlin.octave.max" step="perlin.octave.step" on-slide="onChangePerlin()" ng-click="onChangePerlin()">
+                                    </slider>
 
-                            <button type="button" class="btn btn-default" ng-click="refreshNoise()">Refresh Noise</button>
-                            <hr />
-                        </div>
-                        <div ng-show="selectedMode.id === 0 || selectedMode.id === 2">
-                            <h3>Gradients</h3>
+                                    <button type="button" class="btn btn-default" ng-click="refreshNoise()">Refresh Noise</button>
+                                </div>
+                            </uib-tab>
 
-                            <label>Quantity</label>
-                            <slider slider-id="gradients.quantity.id" ng-model="gradients.quantity.value" value="gradients.quantity.value" min="gradients.quantity.min" max="gradients.quantity.max" step="gradients.quantity.step" on-slide="onChangeGradients()">
-                            </slider>
-                            <br />
+                            <!-- Gradients sliders -->
+                            <uib-tab heading="Gradients" disable="selectedMode.id === 1" active="selectedTab[2]">
+                                <div ng-show="selectedMode.id === 0 || selectedMode.id === 2">
+                                    <h4>Gradients</h4>
+                                    <label>Quantity</label>
+                                    <slider class="bottom-gap" slider-id="gradients.quantity.id" ng-model="gradients.quantity.value" value="gradients.quantity.value" min="gradients.quantity.min" max="gradients.quantity.max" step="gradients.quantity.step" on-slide="onChangeGradients()" ng-click="onChangeGradients()">
+                                    </slider>
 
-                            <label>Intensity</label>
-                            <slider slider-id="gradients.intensity.id" ng-model="gradients.intensity.value" value="gradients.intensity.value" min="gradients.intensity.min" max="gradients.intensity.max" step="gradients.intensity.step" on-slide="onChangeGradients()">
-                            </slider>
-                            <br />
+                                    <label>Intensity</label>
+                                    <slider class="bottom-gap" slider-id="gradients.intensity.id" ng-model="gradients.intensity.value" value="gradients.intensity.value" min="gradients.intensity.min" max="gradients.intensity.max" step="gradients.intensity.step" on-slide="onChangeGradients()" ng-click="onChangeGradients()">
+                                    </slider>
 
-                            <label>Radius</label>
-                            <slider slider-id="gradients.radius.id" ng-model="gradients.radius.value" value="gradients.radius.value" min="gradients.radius.min" max="gradients.radius.max" step="gradients.radius.step" on-slide="onChangeGradients()">
-                            </slider>
-                            <br />
+                                    <label>Radius</label>
+                                    <slider class="bottom-gap" slider-id="gradients.radius.id" ng-model="gradients.radius.value" value="gradients.radius.value" min="gradients.radius.min" max="gradients.radius.max" step="gradients.radius.step" on-slide="onChangeGradients()" ng-click="onChangeGradients()">
+                                    </slider>
 
-                            <button type="button" class="btn btn-default" ng-click="refreshGradients()">Refresh Gradients</button>
-                            <hr />
-                        </div>
+                                    <button type="button" class="btn btn-default" ng-click="refreshGradients()">Refresh Gradients</button>
+                                </div>
+                            </uib-tab>
 
-                        <div style="margin-bottom:30px;">
-                            <button type="button" class="btn btn-default" ng-click="downloadPdf()"><i class="fa fa-file-pdf-o"></i> PDF</button>
-                            <a ng-show="browserCompliant" id="exportPng" class="btn btn-default" ng-click="downloadPng()"><i class="fa fa-file-image-o"></i> PNG</a>
-                        </div>
+                            <!-- Exports -->
+                            <uib-tab heading="Exports" active="selectedTab[3]">
+                                <h4>Exports</h4>
+                                <button type="button" class="btn btn-default" ng-click="downloadPdf()"><i class="fa fa-file-pdf-o"></i> PDF</button>
+                                <a ng-show="browserCompliant" id="exportPng" class="btn btn-default" ng-click="downloadPng()"><i class="fa fa-file-image-o"></i> PNG</a>
+                            </uib-tab>
+                        </uib-tabset>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.14/d3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/6.0.16/bootstrap-slider.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.1.2/ui-bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.1.2/ui-bootstrap-tpls.min.js"></script>
 
     <script src="../app/lib/canvg.min.js"></script>
     <script src="../app/lib/jspdf.js"></script>
@@ -131,7 +160,7 @@
     <script src="../app/services/genericServices.js"></script>
     <script src="../app/entities/hexagon.js"></script>
     <script src="../app/entities/perlin.js"></script>
-    <script src="../app/entities/biome.js"></script>
+    <script src="../app/entities/world.js"></script>
     <script src="../app/services/mapServices.js"></script>
     <script src="../app/controllers/mainCtrl.js"></script>
 

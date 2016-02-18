@@ -1,0 +1,38 @@
+[ng\:cloak],
+[ng-cloak],
+[data-ng-cloak],
+[x-ng-cloak],
+.ng-cloak,
+.x-ng-cloak {
+    display: none !important;
+}
+
+.container {
+    padding: 20px 15px;
+}
+
+.slider-table {
+    width: 100%;
+}
+
+.slider-table tbody > tr > td {
+    border-spacing: 0px 20px;
+}
+
+.slider-table tbody:first-child > tr > td:nth-child(n) {
+    width: 80%;
+}
+
+.slider-table-bottom-gap > td {
+    padding-bottom: 20px;
+}
+
+.total-biomes {
+    width: 100%;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.bottom-gap {
+    padding-bottom: 20px;
+}
