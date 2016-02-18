@@ -55,7 +55,7 @@
                         </div>
 
                         <label>Size</label>
-                        <slider class="bottom-gap" slider-id="islandSize.id" ng-model="islandSize.value" value="islandSize.value" min="islandSize.min" max="islandSize.max" step="islandSize.step" on-slide="onChangeIslandSize()" ng-click="onChangeIslandSize()">
+                        <slider class="bottom-gap" slider-id="islandSize.id" ng-model="islandSize.value" value="islandSize.value" min="islandSize.min" max="islandSize.max" step="islandSize.step" on-slide="onChangeIslandSize()" ng-click="onChangeIslandSize()" formatter="tooltipPercentageFormatter(value)">
                         </slider>
 
                         <button type="button" class="btn btn-primary" ng-click="resfreshAll()">Refresh</button>
@@ -74,7 +74,7 @@
                                             </th>
                                             <tr class="slider-table-bottom-gap">
                                                 <td>
-                                                    <slider slider-id="biome.id" ng-model="biome.value" value="biome.value" min="biome.min" max="biome.max" step="biome.step" on-slide="onChangeBiomesDistribution()" ng-click="onChangeBiomesDistribution()">
+                                                    <slider slider-id="biome.id" ng-model="biome.value" value="biome.value" min="biome.min" max="biome.max" step="biome.step" on-slide="onChangeBiomesDistribution()" ng-click="onChangeBiomesDistribution()" formatter="tooltipPercentageFormatter(value)">
                                                     </slider>
                                                 </td>
                                                 <td class="text-right">{{ biome.value }}%</td>
@@ -84,9 +84,9 @@
                                     <div class="total-biomes">
                                         Total
                                         <span class="pull-right" ng-class="{ 'text-danger': getTotalBiomes() !== 100 }">
-                                        <i class="fa fa-exclamation-triangle" ng-show="getTotalBiomes() !== 100"></i> 
-                                        {{ getTotalBiomes() }}%
-                                </span>
+                                            <i class="fa fa-exclamation-triangle" ng-show="getTotalBiomes() !== 100"></i> 
+                                            {{ getTotalBiomes() }}%
+                                        </span>
                                     </div>
                                     <button type="button" class="btn btn-default" ng-click="randomizeBiomes()">Randomize</button>
                                 </div>
@@ -142,9 +142,13 @@
 
                     </div>
                 </div>
+                <div class="footer">
+                    <p><em>Source code available on <a target="_blank" href="https://github.com/alxgiraud/islandGenerator">Github</a></em></p>
+                </footer>
             </div>
         </div>
     </div>
+
 
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.14/d3.min.js"></script>

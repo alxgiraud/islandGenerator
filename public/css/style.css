@@ -36,3 +36,10 @@
 .bottom-gap {
     padding-bottom: 20px;
 }
+
+.footer {
+    margin-top: 40px;
+}
+.footer > p {
+    float: right;
+}

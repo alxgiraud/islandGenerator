@@ -58,6 +58,10 @@ app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome',
         mapServices.drawGrid(world, $scope.isGrey, $scope.biomesDistribution);
     };
 
+    $scope.tooltipPercentageFormatter = function (value) {
+        return value + '%';
+    };
+    
     $scope.resfreshAll = function () {
         world.setGradientSeeds($scope.gradients.quantity.value);
         world.setGradients($scope.gradients.radius.value, $scope.gradients.intensity.value);
