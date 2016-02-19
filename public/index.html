@@ -103,8 +103,7 @@
                                             </th>
                                             <tr class="slider-table-bottom-gap">
                                                 <td>
-                                                    <!-- ng-disabled= "perlin.id === 1 && selectedMode.id === 1 && !isGrey" -->
-                                                    <slider  tooltip="hide" slider-id="perlin.id" ng-model="perlin.value" value="perlin.value" min="perlin.min" max="perlin.max" step="perlin.step" on-slide="onChangePerlin()" ng-click="onChangePerlin()">
+                                                    <slider ng-disabled= "perlin.id === 1 && selectedMode.id === 1 && !isGrey" tooltip="hide" slider-id="perlin.id" ng-model="perlin.value" value="perlin.value" min="perlin.min" max="perlin.max" step="perlin.step" on-slide="onChangePerlin()" ng-click="onChangePerlin()">
                                                     </slider>
                                                 </td>
                                                 <td class="text-right">{{ perlin.value }}</td>
