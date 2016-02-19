@@ -61,10 +61,10 @@ app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome',
     $scope.tooltipPercentageFormatter = function (value) {
         return value + '%';
     };
-    
+
     $scope.resfreshAll = function () {
-        world.setGradientSeeds($scope.gradients.quantity.value);
-        world.setGradients($scope.gradients.radius.value, $scope.gradients.intensity.value);
+        world.setGradientSeeds($scope.gradientSliders[0].value);
+        world.setGradients($scope.gradientSliders[2].value, $scope.gradientSliders[1].value);
         $scope.refreshNoise();
     };
 
@@ -184,31 +184,34 @@ app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome',
     };
 
     /* Perlin Noise */
-    $scope.perlin = {
-        intensity: {
+    $scope.perlinSliders = [
+        {
             id: 1,
+            label: 'Intensity',
             value: 1,
             min: 0.01,
             max: 5,
             step: 0.1
         },
-        frequency: {
+        {
             id: 2,
+            label: 'Frequency',
             value: 15,
             min: 0.01,
             max: 50,
             step: 1
         },
-        octave: {
+        {
             id: 3,
+            label: 'Octaves',
             value: 1,
             min: 0.01,
             max: 10,
             step: 1
         }
-    };
+    ];
     $scope.onChangePerlin = function () {
-        world.setPerlinNoise($scope.perlin.intensity.value, $scope.perlin.frequency.value, $scope.perlin.octave.value);
+        world.setPerlinNoise($scope.perlinSliders[0].value, $scope.perlinSliders[1].value, $scope.perlinSliders[2].value);
         world.setBiomes($scope.selectedMode.id, $scope.islandSize.value, $scope.biomesDistribution, $scope.isGrey);
         mapServices.drawGrid(world, $scope.isGrey, $scope.biomesDistribution);
     };
@@ -220,39 +223,40 @@ app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome',
     };
 
     /* Gradients */
-    $scope.gradients = {
-        quantity: {
+    $scope.gradientSliders = [
+        {
             id: 4,
+            label: 'Quantity',
             value: 4,
             min: 1,
             max: 20,
             step: 1
-        },
-        intensity: {
+        }, {
             id: 5,
+            label: 'Intensity',
             value: 1,
             min: 0.01,
             max: 5,
             step: 0.1
-        },
-        radius: {
+        }, {
             id: 6,
+            label: 'Radius',
             value: 10,
             min: 0,
             max: 25,
             step: 1
         }
-    };
+    ];
 
     $scope.onChangeGradients = function () {
-        if (world.gradientSeeds.length < $scope.gradients.quantity.value) {
-            world.addGradientSeeds($scope.gradients.quantity.value - world.gradientSeeds.length);
+        if (world.gradientSeeds.length < $scope.gradientSliders[0].value) {
+            world.addGradientSeeds($scope.gradientSliders[0].value - world.gradientSeeds.length);
 
-        } else if (world.gradientSeeds.length > $scope.gradients.quantity.value) {
-            world.removeSeeds(world.gradientSeeds.length - $scope.gradients.quantity.value);
+        } else if (world.gradientSeeds.length > $scope.gradientSliders[0].value) {
+            world.removeSeeds(world.gradientSeeds.length - $scope.gradientSliders[0].value);
         }
 
-        world.setGradients($scope.gradients.radius.value, $scope.gradients.intensity.value);
+        world.setGradients($scope.gradientSliders[2].value, $scope.gradientSliders[1].value);
         world.setBiomes($scope.selectedMode.id, $scope.islandSize.value, $scope.biomesDistribution, $scope.isGrey);
 
         mapServices.drawGrid(world, $scope.isGrey, $scope.biomesDistribution);
@@ -260,7 +264,7 @@ app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome',
 
     /* Button Refresh Gradients */
     $scope.refreshGradients = function () {
-        world.setGradientSeeds($scope.gradients.quantity.value);
+        world.setGradientSeeds($scope.gradientSliders[0].value);
         $scope.onChangeGradients();
     };
 
@@ -276,10 +280,10 @@ app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome',
     $scope.selectedTab = [true, false, false, false];
 
     /* Init the grid on load */
-    world.setGradientSeeds($scope.gradients.quantity.value);
-    world.setGradients($scope.gradients.radius.value, $scope.gradients.intensity.value);
+    world.setGradientSeeds($scope.gradientSliders[0].value);
+    world.setGradients($scope.gradientSliders[2].value, $scope.gradientSliders[1].value);
     world.perlinSeed = Math.random();
-    world.setPerlinNoise($scope.perlin.intensity.value, $scope.perlin.frequency.value, $scope.perlin.octave.value);
+    world.setPerlinNoise($scope.perlinSliders[0].value, $scope.perlinSliders[1].value, $scope.perlinSliders[2].value);
     world.setBiomes($scope.selectedMode.id, $scope.islandSize.value, $scope.biomesDistribution, $scope.isGrey);
 
     mapServices.drawGrid(world, $scope.isGrey, $scope.biomesDistribution);

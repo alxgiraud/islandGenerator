@@ -74,7 +74,7 @@
                                             </th>
                                             <tr class="slider-table-bottom-gap">
                                                 <td>
-                                                    <slider slider-id="biome.id" ng-model="biome.value" value="biome.value" min="biome.min" max="biome.max" step="biome.step" on-slide="onChangeBiomesDistribution()" ng-click="onChangeBiomesDistribution()" formatter="tooltipPercentageFormatter(value)">
+                                                    <slider tooltip="hide" slider-id="biome.id" ng-model="biome.value" value="biome.value" min="biome.min" max="biome.max" step="biome.step" on-slide="onChangeBiomesDistribution()" ng-click="onChangeBiomesDistribution()" formatter="tooltipPercentageFormatter(value)">
                                                     </slider>
                                                 </td>
                                                 <td class="text-right">{{ biome.value }}%</td>
@@ -96,18 +96,21 @@
                             <uib-tab heading="Perlin" disable="selectedMode.id === 2" active="selectedTab[1]">
                                 <div ng-show="selectedMode.id === 0 || selectedMode.id === 1">
                                     <h4>Perlin</h4>
-                                    <label>Intensity</label>
-                                    <slider class="bottom-gap" slider-id="perlin.intensity.id" ng-model="perlin.intensity.value" value="perlin.intensity.value" min="perlin.intensity.min" max="perlin.intensity.max" step="perlin.intensity.step" on-slide="onChangePerlin()" ng-click="onChangePerlin()">
-                                    </slider>
-
-                                    <label>Frequency</label>
-                                    <slider class="bottom-gap" slider-id="perlin.frequency.id" ng-model="perlin.frequency.value" value="perlin.frequency.value" min="perlin.frequency.min" max="perlin.frequency.max" step="perlin.frequency.step" on-slide="onChangePerlin()" ng-click="onChangePerlin()">
-                                    </slider>
-
-                                    <label>Octaves</label>
-                                    <slider class="bottom-gap" slider-id="perlin.octave.id" ng-model="perlin.octave.value" value="perlin.octave.value" min="perlin.octave.min" max="perlin.octave.max" step="perlin.octave.step" on-slide="onChangePerlin()" ng-click="onChangePerlin()">
-                                    </slider>
-
+                                    <table class="slider-table">
+                                        <tbody ng-repeat="perlin in perlinSliders">
+                                            <th class="colspan2">
+                                                <label>{{ perlin.label }}</label>
+                                            </th>
+                                            <tr class="slider-table-bottom-gap">
+                                                <td>
+                                                    <!-- ng-disabled= "perlin.id === 1 && selectedMode.id === 1 && !isGrey" -->
+                                                    <slider  tooltip="hide" slider-id="perlin.id" ng-model="perlin.value" value="perlin.value" min="perlin.min" max="perlin.max" step="perlin.step" on-slide="onChangePerlin()" ng-click="onChangePerlin()">
+                                                    </slider>
+                                                </td>
+                                                <td class="text-right">{{ perlin.value }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                     <button type="button" class="btn btn-default" ng-click="refreshNoise()">Refresh Noise</button>
                                 </div>
                             </uib-tab>
@@ -116,17 +119,21 @@
                             <uib-tab heading="Gradients" disable="selectedMode.id === 1" active="selectedTab[2]">
                                 <div ng-show="selectedMode.id === 0 || selectedMode.id === 2">
                                     <h4>Gradients</h4>
-                                    <label>Quantity</label>
-                                    <slider class="bottom-gap" slider-id="gradients.quantity.id" ng-model="gradients.quantity.value" value="gradients.quantity.value" min="gradients.quantity.min" max="gradients.quantity.max" step="gradients.quantity.step" on-slide="onChangeGradients()" ng-click="onChangeGradients()">
-                                    </slider>
 
-                                    <label>Intensity</label>
-                                    <slider class="bottom-gap" slider-id="gradients.intensity.id" ng-model="gradients.intensity.value" value="gradients.intensity.value" min="gradients.intensity.min" max="gradients.intensity.max" step="gradients.intensity.step" on-slide="onChangeGradients()" ng-click="onChangeGradients()">
-                                    </slider>
-
-                                    <label>Radius</label>
-                                    <slider class="bottom-gap" slider-id="gradients.radius.id" ng-model="gradients.radius.value" value="gradients.radius.value" min="gradients.radius.min" max="gradients.radius.max" step="gradients.radius.step" on-slide="onChangeGradients()" ng-click="onChangeGradients()">
-                                    </slider>
+                                    <table class="slider-table">
+                                        <tbody ng-repeat="gradient in gradientSliders">
+                                            <th class="colspan2">
+                                                <label>{{ gradient.label }}</label>
+                                            </th>
+                                            <tr class="slider-table-bottom-gap">
+                                                <td>
+                                                    <slider tooltip="hide" slider-id="gradient.id" ng-model="gradient.value" value="gradient.value" min="gradient.min" max="gradient.max" step="gradient.step" on-slide="onChangeGradients()" ng-click="onChangeGradients()">
+                                                    </slider>
+                                                </td>
+                                                <td class="text-right">{{ gradient.value }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
 
                                     <button type="button" class="btn btn-default" ng-click="refreshGradients()">Refresh Gradients</button>
                                 </div>
@@ -144,29 +151,29 @@
                 </div>
                 <div class="footer">
                     <p><em>Source code available on <a target="_blank" href="https://github.com/alxgiraud/islandGenerator">Github</a></em></p>
-                </footer>
+                    </footer>
+                </div>
             </div>
         </div>
-    </div>
 
 
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.14/d3.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/6.0.16/bootstrap-slider.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.1.2/ui-bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.1.2/ui-bootstrap-tpls.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.14/d3.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/6.0.16/bootstrap-slider.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.1.2/ui-bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.1.2/ui-bootstrap-tpls.min.js"></script>
 
-    <script src="../app/lib/canvg.min.js"></script>
-    <script src="../app/lib/jspdf.js"></script>
-    <script src="../app/lib/angularSlider.js"></script>
+        <script src="../app/lib/canvg.min.js"></script>
+        <script src="../app/lib/jspdf.js"></script>
+        <script src="../app/lib/angularSlider.js"></script>
 
-    <script src="../app/app.js"></script>
-    <script src="../app/services/genericServices.js"></script>
-    <script src="../app/entities/hexagon.js"></script>
-    <script src="../app/entities/perlin.js"></script>
-    <script src="../app/entities/world.js"></script>
-    <script src="../app/services/mapServices.js"></script>
-    <script src="../app/controllers/mainCtrl.js"></script>
+        <script src="../app/app.js"></script>
+        <script src="../app/services/genericServices.js"></script>
+        <script src="../app/entities/hexagon.js"></script>
+        <script src="../app/entities/perlin.js"></script>
+        <script src="../app/entities/world.js"></script>
+        <script src="../app/services/mapServices.js"></script>
+        <script src="../app/controllers/mainCtrl.js"></script>
 
 </body>
 
