@@ -77,17 +77,10 @@
                                                     <slider tooltip="hide" slider-id="biome.id" ng-model="biome.value" value="biome.value" min="biome.min" max="biome.max" step="biome.step" on-slide="onChangeBiomesDistribution()" ng-click="onChangeBiomesDistribution()" formatter="tooltipPercentageFormatter(value)">
                                                     </slider>
                                                 </td>
-                                                <td class="text-right">{{ biome.value }}%</td>
+                                                <td class="text-right">{{ biome.percentage }}%</td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <div class="total-biomes">
-                                        Total
-                                        <span class="pull-right" ng-class="{ 'text-danger': getTotalBiomes() !== 100 }">
-                                            <i class="fa fa-exclamation-triangle" ng-show="getTotalBiomes() !== 100"></i> 
-                                            {{ getTotalBiomes() }}%
-                                        </span>
-                                    </div>
                                     <button type="button" class="btn btn-default" ng-click="randomizeBiomes()">Randomize</button>
                                 </div>
                             </uib-tab>

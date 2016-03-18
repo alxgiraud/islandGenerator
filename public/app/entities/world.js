@@ -85,6 +85,24 @@ app.factory('Biome', ['Hexagon', 'Perlin', 'genericServices', function (Hexagon,
         return sortedIntensities;
     }
 
+    function getBiomesPercentage(biomesDistribution) {
+        var i,
+            totalBiomes = 0,
+            previousValue,
+            biomesPercentage = [];
+
+        for (i = 0; i < biomesDistribution.length; i += 1) {
+            totalBiomes += biomesDistribution[i].value;
+        }
+
+        for (i = 0; i < biomesDistribution.length; i += 1) {
+            previousValue = (i < 0) ? biomesPercentage[i - 1] : 0;
+            biomesPercentage.push(previousValue + biomesDistribution[i].value / totalBiomes);
+        }
+
+        return biomesPercentage;
+    }
+
     /* Public functions */
     Biome.prototype = {
 
@@ -202,7 +220,9 @@ app.factory('Biome', ['Hexagon', 'Perlin', 'genericServices', function (Hexagon,
                 sortedIntensities = [],
                 gradient,
                 perlin,
-                limit;
+                limit,
+                biomesPercentage = [],
+                totalBiomes = 0;
 
             for (i = 0; i < this.chunks.length; i += 1) {
                 intensities[i] = [];
@@ -231,41 +251,42 @@ app.factory('Biome', ['Hexagon', 'Perlin', 'genericServices', function (Hexagon,
                 }
             }
 
-            // assign biome based on intensity distribution
+            biomesPercentage = getBiomesPercentage(biomesDistribution);
+
             for (i = 0; i < this.chunks.length; i += 1) {
                 for (j = 0; j < this.chunks[i].length; j += 1) {
                     if (isGrey) {
                         this.chunks[i][j].biome = intensities[i][j]; //Add raw intensity as biome for grey scale
                     } else {
                         if (intensities[i][j] > 0) {
-                            limit = Math.round(sortedIntensities.length * biomesDistribution[0].value / 100);
+                            limit = Math.round(sortedIntensities.length * biomesPercentage[0]);
                             if (intensities[i][j] < sortedIntensities[limit]) {
                                 this.chunks[i][j].biome = 1;
                             } else {
 
-                                limit += Math.round(sortedIntensities.length * biomesDistribution[1].value / 100);
+                                limit += Math.round(sortedIntensities.length * biomesPercentage[1]);
                                 if (intensities[i][j] < sortedIntensities[limit]) {
                                     this.chunks[i][j].biome = 2;
                                 } else {
 
-                                    limit += Math.round(sortedIntensities.length * biomesDistribution[2].value / 100);
+                                    limit += Math.round(sortedIntensities.length * biomesPercentage[2]);
                                     if (intensities[i][j] < sortedIntensities[limit]) {
                                         this.chunks[i][j].biome = 3;
                                     } else {
 
-                                        limit += Math.round(sortedIntensities.length * biomesDistribution[3].value / 100);
+                                        limit += Math.round(sortedIntensities.length * biomesPercentage[3]);
                                         if (intensities[i][j] < sortedIntensities[limit]) {
                                             this.chunks[i][j].biome = 4;
                                         } else {
-                                            if (biomesDistribution[4].value > 0) {
+                                            if (biomesPercentage[4] > 0) {
                                                 this.chunks[i][j].biome = 5;
-                                            } else if (biomesDistribution[3].value > 0) {
+                                            } else if (biomesPercentage[3] > 0) {
                                                 this.chunks[i][j].biome = 4;
 
-                                            } else if (biomesDistribution[2].value > 0) {
+                                            } else if (biomesPercentage[2] > 0) {
                                                 this.chunks[i][j].biome = 3;
 
-                                            } else if (biomesDistribution[1].value > 0) {
+                                            } else if (biomesPercentage[1] > 0) {
                                                 this.chunks[i][j].biome = 2;
                                             }
                                         }

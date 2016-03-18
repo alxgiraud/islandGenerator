@@ -20,7 +20,6 @@ app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome',
             name: 'Gradients Only'
         }
     ];
-
     $scope.selectedMode = $scope.modes[0];
     $scope.selectMode = function (id) {
         if (id === 1 && $scope.selectedTab[2]) {
@@ -76,7 +75,8 @@ app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome',
             value: 15,
             min: 0,
             max: 100,
-            step: 1
+            step: 1,
+            percentage: 15
         },
         {
             label: 'Sand',
@@ -84,7 +84,8 @@ app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome',
             value: 30,
             min: 0,
             max: 100,
-            step: 1
+            step: 1,
+            percentage: 30
         },
         {
             label: 'Grass',
@@ -92,7 +93,8 @@ app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome',
             value: 35,
             min: 0,
             max: 100,
-            step: 1
+            step: 1,
+            percentage: 35
         },
         {
             label: 'Forest',
@@ -100,7 +102,8 @@ app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome',
             value: 15,
             min: 0,
             max: 100,
-            step: 1
+            step: 1,
+            percentage: 15
         },
         {
             label: 'Dark Forest',
@@ -108,46 +111,24 @@ app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome',
             value: 5,
             min: 0,
             max: 100,
-            step: 1
+            step: 1,
+            percentage: 5
         }
     ];
     $scope.onChangeBiomesDistribution = function () {
-        world.setBiomes($scope.selectedMode.id, $scope.islandSize.value, $scope.biomesDistribution, $scope.isGrey);
-        mapServices.drawGrid(world, $scope.isGrey, $scope.selectedMode.id);
-    };
-
-    $scope.getTotalBiomes = function () {
-        var total = 0,
-            i;
-
-        for (i = 0; i < $scope.biomesDistribution.length; i += 1) {
-            total += $scope.biomesDistribution[i].value;
-        }
-
-        return total;
-    };
-
-    $scope.randomizeBiomes = function () {
-        var rands = [
-                genericServices.rand(0, 100),
-                genericServices.rand(0, 100),
-                genericServices.rand(0, 100),
-                genericServices.rand(0, 100),
-                genericServices.rand(0, 100)
-            ],
-            total = 0,
+        var totalValues = 0,
             i,
             roundedValues = [],
             totalRounded = 0,
             gap;
 
-        for (i = 0; i < rands.length; i += 1) {
-            total += rands[i];
+        for (i = 0; i < $scope.biomesDistribution.length; i += 1) {
+            totalValues += $scope.biomesDistribution[i].value;
         }
 
-        for (i = 0; i < rands.length; i += 1) {
-            roundedValues.push(Math.round(rands[i] * 100 / total));
-            totalRounded += Math.round(rands[i] * 100 / total);
+        for (i = 0; i < $scope.biomesDistribution.length; i += 1) {
+            roundedValues.push(Math.round($scope.biomesDistribution[i].value * 100 / totalValues));
+            totalRounded += Math.round($scope.biomesDistribution[i].value * 100 / totalValues);
         }
 
         gap = totalRounded - 100;
@@ -177,7 +158,17 @@ app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome',
         }
 
         for (i = 0; i < $scope.biomesDistribution.length; i += 1) {
-            $scope.biomesDistribution[i].value = roundedValues[i];
+            $scope.biomesDistribution[i].percentage = roundedValues[i];
+        }
+        
+        world.setBiomes($scope.selectedMode.id, $scope.islandSize.value, $scope.biomesDistribution, $scope.isGrey);
+        mapServices.drawGrid(world, $scope.isGrey, $scope.selectedMode.id);
+    };
+
+    $scope.randomizeBiomes = function () {
+        var i;
+        for (i = 0; i < $scope.biomesDistribution.length; i += 1) {
+            $scope.biomesDistribution[i].value = genericServices.rand(0, 100);
         }
 
         $scope.onChangeBiomesDistribution();
@@ -247,7 +238,6 @@ app.controller('mainCtrl', ['$scope', 'mapServices', 'genericServices', 'Biome',
             step: 1
         }
     ];
-
     $scope.onChangeGradients = function () {
         if (world.gradientSeeds.length < $scope.gradientSliders[0].value) {
             world.addGradientSeeds($scope.gradientSliders[0].value - world.gradientSeeds.length);
