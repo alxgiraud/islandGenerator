@@ -25,7 +25,7 @@
                         <h2>Island</h2>
                         <div id="svgMapContainer" class="list-group"></div>
                         <!-- Hidden canvas used by PDF/PNG downloads -->
-                        <canvas id="canvas" width="100%" height="800px" ng-show="false"></canvas>
+                        <canvas id="canvas" height="800" ng-show="false"></canvas>
                     </div>
                     <div class="col-sm-4">
                         <h2>Parameters</h2>
@@ -38,7 +38,7 @@
                                     <button type="button" class="btn btn-default" uib-dropdown-toggle>
                                         {{ selectedMode.name }} <span class="caret"></span>
                                     </button>
-                                    <ul uib-dropdown-menu aria-labelledby="simple-dropdown">
+                                    <ul uib-dropdown-menu>
                                         <li ng-repeat="mode in modes">
                                             <a href ng-click="selectMode(mode.id)">{{ mode.name }}</a>
                                         </li>
@@ -69,9 +69,11 @@
                                     <h4>Biomes</h4>
                                     <table class="slider-table">
                                         <tbody ng-repeat="biome in biomesDistribution">
-                                            <th class="colspan2">
-                                                <label>{{ biome.label }}</label>
-                                            </th>
+                                            <tr>
+                                                <th class="colspan2">
+                                                    <label>{{ biome.label }}</label>
+                                                </th>
+                                            </tr>
                                             <tr class="slider-table-bottom-gap">
                                                 <td>
                                                     <slider tooltip="hide" slider-id="biome.id" ng-model="biome.value" value="biome.value" min="biome.min" max="biome.max" step="biome.step" on-slide="onChangeBiomesDistribution()" ng-click="onChangeBiomesDistribution()" formatter="tooltipPercentageFormatter(value)">
@@ -91,9 +93,11 @@
                                     <h4>Perlin</h4>
                                     <table class="slider-table">
                                         <tbody ng-repeat="perlin in perlinSliders">
-                                            <th class="colspan2">
-                                                <label>{{ perlin.label }}</label>
-                                            </th>
+                                            <tr>
+                                                <th class="colspan2">
+                                                    <label>{{ perlin.label }}</label>
+                                                </th>
+                                            </tr>
                                             <tr class="slider-table-bottom-gap">
                                                 <td>
                                                     <slider ng-disabled="perlin.id === 1 && selectedMode.id === 1 && !isGrey" tooltip="hide" slider-id="perlin.id" ng-model="perlin.value" value="perlin.value" min="perlin.min" max="perlin.max" step="perlin.step" on-slide="onChangePerlin()" ng-click="onChangePerlin()">
@@ -114,9 +118,11 @@
 
                                     <table class="slider-table">
                                         <tbody ng-repeat="gradient in gradientSliders">
-                                            <th class="colspan2">
-                                                <label>{{ gradient.label }}</label>
-                                            </th>
+                                            <tr>
+                                                <th class="colspan2">
+                                                    <label>{{ gradient.label }}</label>
+                                                </th>
+                                            </tr>
                                             <tr class="slider-table-bottom-gap">
                                                 <td>
                                                     <slider tooltip="hide" slider-id="gradient.id" ng-model="gradient.value" value="gradient.value" min="gradient.min" max="gradient.max" step="gradient.step" on-slide="onChangeGradients()" ng-click="onChangeGradients()">
@@ -145,36 +151,43 @@
                     <p><em>Source code available on <a target="_blank" href="https://github.com/alxgiraud/islandGenerator">Github</a></em></p>
                 </div>
             </div>
-        </div>    
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.14/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/6.0.16/bootstrap-slider.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.1.2/ui-bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.1.2/ui-bootstrap-tpls.min.js"></script>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.14/d3.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/6.0.16/bootstrap-slider.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.1.2/ui-bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.1.2/ui-bootstrap-tpls.min.js"></script>
+    <script src="../app/lib/canvg.min.js"></script>
+    <script src="../app/lib/jspdf.js"></script>
+    <script src="../app/lib/angularSlider.js"></script>
 
-        <script src="../app/lib/canvg.min.js"></script>
-        <script src="../app/lib/jspdf.js"></script>
-        <script src="../app/lib/angularSlider.js"></script>
+    <script src="../app/app.js"></script>
+    <script src="../app/services/genericServices.js"></script>
+    <script src="../app/entities/hexagon.js"></script>
+    <script src="../app/entities/perlin.js"></script>
+    <script src="../app/entities/world.js"></script>
+    <script src="../app/services/mapServices.js"></script>
+    <script src="../app/controllers/mainCtrl.js"></script>
 
-        <script src="../app/app.js"></script>
-        <script src="../app/services/genericServices.js"></script>
-        <script src="../app/entities/hexagon.js"></script>
-        <script src="../app/entities/perlin.js"></script>
-        <script src="../app/entities/world.js"></script>
-        <script src="../app/services/mapServices.js"></script>
-        <script src="../app/controllers/mainCtrl.js"></script>
+    <script>
+        (function(i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function() {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-        <script>
-          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-74043644-1', 'auto');
+        ga('send', 'pageview');
 
-          ga('create', 'UA-74043644-1', 'auto');
-          ga('send', 'pageview');
-
-        </script>
+    </script>
 
 </body>
 
